@@ -4,31 +4,23 @@ function Game_load(width,height){
   game.fps = 20;
   game.onload = function(){
     var Chat_Scene = function(Datas){
-
       var scene = new Scene();
-
       var Kaigyo = 0;
       var Kaigyo_S = 0;
       var Match = null;
-      for (var i = 0; i < Object.keys(Datas).length; i++) {
-        if(Datas[Object.keys(Datas)[i]].text){
-          Match = Datas[Object.keys(Datas)[i]].text.match(/●/g);
-          if(Match){
-            for(var k = 0; k < Match.length; k++){
-            Kaigyo = Datas[Object.keys(Datas)[i]].text.indexOf("●");
+        Match = Datas.text.match(/●/g);
+        if(Match){
+          for(var k = 0; k < Match.length; k++){
+            Kaigyo = Datas.text.indexOf("●");
             Kaigyo = Kaigyo%18;
             Kaigyo = 18 - Kaigyo;
             Kaigyo_S = "";
-            for (var j = 0; j < Kaigyo; j++) {
-              Kaigyo_S += " ";
-            }
-            Datas[Object.keys(Datas)[i]].text = Datas[Object.keys(Datas)[i]].text.replace(Match[k],Kaigyo_S);
-          };
+            for(var j = 0; j < Kaigyo; j++) Kaigyo_S += " ";
+            Datas.text = Datas.text.replace(Match[k],Kaigyo_S);
           };
         };
-      };
 
-      var i = 1;
+      var i = 0;
       var Image = [];
       var Images_Data = {};
       var Cut = true;
@@ -50,8 +42,8 @@ function Game_load(width,height){
       }
 
       if(Datas.image){
-        while(Datas.image[i]){
-          Images(0,0,0,0,0,Datas.image[i].name);
+        while(Datas.image[i+1]){
+          Images(Datas.image[i+1].w,Datas.image[i+1].h,Datas.image[i+1].x,Datas.image[i+1].y,Datas.image[i+1].src);
         };
       };
 
@@ -91,42 +83,18 @@ function Game_load(width,height){
 
       for(var j = 0; j < 5; j++) Choice(j);
 
-      var k = 1;
-      if(Datas[k].image){
-        i = 1;
-        while(Datas[k].image[i]){
-          if(Datas[k].image[i].src){
-            Image[Images_Data[Datas[k].image[i].name]]._element.src = Datas[k].image[i].src;
-          }
-          if(Datas[k].image[i].width){
-            Image[Images_Data[Datas[k].image[i].name]].width = Datas[k].image[i].width;
-          }
-          if(Datas[k].image[i].height){
-            Image[Images_Data[Datas[k].image[i].name]].height = Datas[k].image[i].height;
-          }
-          if(Datas[k].image[i].x){
-            Image[Images_Data[Datas[k].image[i].name]].x = Datas[k].image[i].x;
-          }
-          if(Datas[k].image[i].y){
-            Image[Images_Data[Datas[k].image[i].name]].y = Datas[k].image[i].y;
-          }
-          i++;
-        }
-      };
-      if(Datas[k].text){
-        if(Datas[k].text.indexOf(":")==-1) var Write = 1;
+      if(Datas.text){
+        if(Datas.text.indexOf(":")==-1) var Write = 1;
         else var Write = 2;
       };
 
-      var Next = Datas[k].next;
-
       function Text_write(){
-        while(Datas[k].text[i]==" ") i++;
-        if(Datas[k].text[i]==":") Write = 2;
-        Text[i]._element.textContent = Datas[k].text[i];
+        while(Datas.text[i]==" ") i++;
+        if(Datas.text[i]==":") Write = 2;
+        Text[i]._element.textContent = Datas.text[i];
         i++;
-        if(Datas[k].text[i]==undefined){
-          if(Datas[k].選択肢) Write = "選択肢";
+        if(Datas.text[i]==undefined){
+          if(Datas.選択肢) Write = "選択肢";
           else Write = false;
         }
         if(Write==2) Text_write();
@@ -141,19 +109,19 @@ function Game_load(width,height){
           if(Write=="選択肢"){
             Key_c = false;
             i = Image.length;
-            for(var j = 0; j < Object.keys(Datas[k].選択肢).length; j++){
-              ChoiceText[j]._element.textContent = Datas[k].選択肢[Object.keys(Datas[k].選択肢)[j]].text;
+            for(var j = 0; j < Object.keys(Datas.選択肢).length; j++){
+              ChoiceText[j]._element.textContent = Datas.選択肢[Object.keys(Datas.選択肢)[j]];
               ChoiceText[j].Number = j;
               ChoiceText[j].opacity = 1;
               ChoiceText[j].選択 = false;
               Image[Images_Data["選択肢"+j]].Number = j;
-              Image[Images_Data["選択肢"+j]].next = Datas[k].選択肢[Object.keys(Datas[k].選択肢)[j]].next;
+              Image[Images_Data["選択肢"+j]].next = Datas.選択肢[Object.keys(Datas.選択肢)[j]].next;
               Image[Images_Data["選択肢"+j]].text = ChoiceText[j]._element.textContent;
               Image[Images_Data["選択肢"+j]].opacity = 0.5;
             }
             ChoiceText[j-1].選択 = true;
             ChoiceText[j-1]._element.textContent = "▶ " + ChoiceText[j-1]._element.textContent;
-            Next = Datas[k].選択肢[Object.keys(Datas[k].選択肢)[j-1]].next;
+            Next = Datas.選択肢[Object.keys(Datas.選択肢)[j-1]].next;
             C_N = j-1;
             Write = false;
           }
@@ -193,44 +161,16 @@ function Game_load(width,height){
 
       return scene;
     };
-    Datas = {
-      image:{
-        1:{name:"証人席"},
-        2:{name:"ガキ"},
-        3:{name:"証言台"}
-      },
-      1:{
-        text:"アクムー:●まあ、そこはアクムーちゃんは●アクムー様だから。",
-        image:{
-          1:{
-            name:"ガキ",
-            src:"ガキ.png",
-            width:1600,
-            height:900,
-            x:0,
-            y:0
-          },
-          2:{
-            name:"証人席",
-            src:"証人席.png",
-            width:1600,
-            height:900,
-            x:0,
-            y:0
-          },
-          3:{
-            name:"証言台",
-            src:"証言台.png",
-            width:1600,
-            height:900,
-            x:0,
-            y:0
-          }
-        },
-        選択肢:{3:{text:"そうなんだ。"},2:{text:"すごーい！"},1:{text:"えもい！"}}
-      }
+    var URL = "https://script.google.com/macros/s/AKfycbw2Dx5NjCfQRv1TlpH0kSnvzvZrrLXoWI55JSpuda8XYxwEwbMd/exec";
+    var Options = {
+      method: "post",
+      body:JSON.stringify({Sheet_name:"会話"})
     };
-    game.replaceScene(Chat_Scene(Datas));
+    fetch(URL,Options).then(res => res.json()).then(result => {
+      Datas = JSON.parse(result[0].data);
+      game.replaceScene(Chat_Scene(Datas));
+      return;
+    },);
     return;
   };
   game.start();
