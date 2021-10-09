@@ -28,8 +28,7 @@ function Game_load(width,height){
       function Images(w,h,x,y,a,b){
         Image[i] = new Sprite();
         Image[i]._element = document.createElement("img");
-        if(a) Image[i]._element.src = a;
-        else Image[i]._element.src = "透明.png";
+        Image[i]._element.src = a;
         Image[i].width = w;
         Image[i].height = h;
         Image[i].x = x;
@@ -47,7 +46,6 @@ function Game_load(width,height){
         };
       };
 
-      Images(width,height,0,0,"透明.png","背景");
       Images(width,400,0,480,"textbox.png","テキストボックス");
       Image[Images_Data.テキストボックス].opacity = 0.5;
 
